@@ -3,13 +3,19 @@
 
 var net = require('net')
 
-var chatServer = net.createServer()
+var chatServer = net.createServer(),
+                  clientList = []
 
 chatServer.on('connection', function(client) {
   client.write('Hi!\n');
-  client.write('Bye!\n');
 
-  client.end()
+  clientList.push(client)
+
+  client.on('data', function(data) {
+    for(var i = 0; i < clientList.length; i+=1) {
+      clientList[i].write(data)
+    }
+  })
 })
 
 chatServer.listen(9000)
